@@ -6,13 +6,18 @@ load_dotenv()
 USER = os.getenv('USERNAME')
 PASSWORD = os.getenv('PASSWORD')
 
-conn = psycopg2.connect(
+
+
+def get_db_connection():
+    conn = psycopg2.connect(
         dbname = "robyn_db",
         user = "postgres",
         password = PASSWORD
     )
+    return conn
 
 # Open a cursor to perform database operations
+conn = get_db_connection()
 cur = conn.cursor()
 
 # Execute a command: this creates a new table
