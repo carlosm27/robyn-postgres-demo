@@ -1,33 +1,9 @@
-from robyn import Robyn, jsonify
+from robyn import Robyn
 from controllers import all_books, new_book, book_by_id, delete_book, update_book
 import json
-from dotenv import load_dotenv
-import os
-import psycopg2
-from init_db import conn
 
 
 app = Robyn(__file__)
-
-
-load_dotenv()
-USER = os.getenv('USERNAME')
-PASSWORD = os.getenv('PASSWORD')
-
-def get_db_connection():
-    conn = psycopg2.connect(
-        dbname = "robyn_db",
-        user = "postgres",
-        password = PASSWORD
-    )
-
-    return conn
-
-
-
-@app.get("/")
-async def h(request):
-    return "Hello, world!"
 
 
 @app.post("/book")
@@ -46,8 +22,7 @@ async def create_book(request):
 
 
 @app.get("/books")
-async def books(request):
-    print("Here")
+async def books():
     books = all_books()
     return books
 
@@ -56,13 +31,13 @@ async def books(request):
 async def get_book(request):
     id = request['params']['id']
 
-
     book = book_by_id(id)
 
     if book == None:
         return {"status_code":404, "body": "Book not Found", "type": "text"}
     else:
         return book   
+    
         
 @app.put("/book/:id")
 async def update(request):
