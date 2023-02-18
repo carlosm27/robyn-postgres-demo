@@ -1,32 +1,15 @@
-from dotenv import load_dotenv
-import os
-from init_db import conn
-import psycopg2
 
+from init_db import get_db_connection
 
-load_dotenv()
-USER = os.getenv('USERNAME')
-PASSWORD = os.getenv('PASSWORD')
-
-def get_db_connection():
-    conn = psycopg2.connect(
-        dbname = "robyn_db",
-        user = "postgres",
-        password = PASSWORD
-    )
-
-    return conn
 
 def all_books():
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute('SELECT * FROM books;')
     books = cur.fetchall()
-    print(books)
     cur.close()
     conn.close()
     
-
     return books
 
 
@@ -41,9 +24,9 @@ def new_book(title:str, author:str, pages_num:int, review:str):
     conn.commit()
     cur.close()
     conn.close()
-
     
     return book
+
 
 def book_by_id(id:int):
     conn = get_db_connection()
@@ -64,8 +47,7 @@ def update_book(title:str, author, pages_num, review, id:int):
     conn.commit()
     cur.close()
     conn.close()
-
-    
+  
     return  book
 
 
