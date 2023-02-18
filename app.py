@@ -1,12 +1,11 @@
 from robyn import Robyn, jsonify
-from handlers import create_items, all_items
+from controllers import all_books
 import json
-from models import Items
-
 from dotenv import load_dotenv
-
 import os
 import psycopg2
+from init_db import conn
+
 
 app = Robyn(__file__)
 
@@ -46,7 +45,7 @@ async def books(request):
     return books
 
 @app.post("/book")
-async def new_item(request,):
+async def new_item(request):
     body = bytearray(request['body']).decode("utf-8")
     json_body = json.loads(body)
 
@@ -67,14 +66,17 @@ async def new_item(request,):
     
     return "Book Added"
 
+@app.get("/all")
+async def all(request):
+    print("Here")
+    books = all_books()
+    print(books)
+    return books
+
 
     
     
     
-
-    
-    
-    return {"status_code":201, "body": jsonify(new_item.__dict__['name']), "type": "json"}
 
 
 app.start(port=8000, url="0.0.0.0")
