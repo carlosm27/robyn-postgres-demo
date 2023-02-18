@@ -30,7 +30,9 @@ def all_books():
     return books
 
 
-def new_book(title, author, pages_num, review, conn=conn):
+def new_book(title:str, author:str, pages_num:int, review:str):
+    
+    conn = get_db_connection()
     cur = conn.cursor()
     cur.execute('INSERT INTO books (title, author, pages_num, review)'
                     'VALUES (%s, %s, %s, %s)',
@@ -41,3 +43,13 @@ def new_book(title, author, pages_num, review, conn=conn):
 
     
     return "Book Added"
+
+def book_by_id(id:int):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM books WHERE id=%s', (id,))
+    book = cur.fetchall()
+    print(book)
+    cur.close()
+    conn.close()
+    return book
