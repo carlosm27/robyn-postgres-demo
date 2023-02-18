@@ -35,36 +35,38 @@ def new_book(title:str, author:str, pages_num:int, review:str):
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute('INSERT INTO books (title, author, pages_num, review)'
-                    'VALUES (%s, %s, %s, %s)',
+                    'VALUES (%s, %s, %s, %s) RETURNING *;',
                     (title, author, pages_num, review))
+    book = cur.fetchone()[:]
     conn.commit()
     cur.close()
     conn.close()
 
     
-    return "Book Added"
+    return book
 
 def book_by_id(id:int):
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute('SELECT * FROM books WHERE id=%s', (id,))
-    book = cur.fetchall()
+    book = cur.fetchone()
     
     cur.close()
     conn.close()
     return book
 
 
-def update_book(title:str, id:int):
+def update_book(title:str, author, pages_num, review, id:int):
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute('UPDATE books SET title = %s WHERE id = %s', (title, id))
+    cur.execute('UPDATE books SET title = %s, author=%s, pages_num=%s, review=%s WHERE id = %s RETURNING *;', (title, author, pages_num, review, id))
+    book =cur.fetchone()[:]
     conn.commit()
     cur.close()
     conn.close()
 
     
-    return "Book updated"
+    return  book
 
 
 def delete_book(id:int):
