@@ -8,7 +8,7 @@ PASSWORD = os.getenv('PASSWORD')
 
 conn = psycopg2.connect(
         dbname = "robyn_db",
-        user = USER,
+        user = "postgres",
         password = PASSWORD
     )
 
