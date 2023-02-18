@@ -40,28 +40,26 @@ async def create_book(request):
     pages_num = json_body['pages_num']
     review = json_body['review']
 
-    print(title)
     book = new_book(title, author, pages_num, review)
-    print(book)
     
     return book
+
 
 @app.get("/books")
 async def books(request):
     print("Here")
     books = all_books()
-    print(books)
     return books
+
 
 @app.get("/book/:id")
 async def get_book(request):
     id = request['params']['id']
-    print(id)
 
 
     book = book_by_id(id)
 
-    if book == []:
+    if book == None:
         return {"status_code":404, "body": "Book not Found", "type": "text"}
     else:
         return book   
@@ -69,7 +67,6 @@ async def get_book(request):
 @app.put("/book/:id")
 async def update(request):
     id = request['params']['id']
-    print(id)
 
     body = bytearray(request['body']).decode("utf-8")
     json_body = json.loads(body)
@@ -78,24 +75,20 @@ async def update(request):
     author = json_body['author']
     pages_num = json_body['pages_num']
     review = json_body['review']
-    print(title)
 
     book_id = book_by_id(id)
-    print(book_id)
 
     if book_id == []:
         return {"status_code":404, "body": "Book not Found", "type": "text"}
     else:    
-        book = update_book(title, book_id)
+        book = update_book(title, author, pages_num, review, id)
         print(book)
         return book
-
-
+    
 
 @app.delete("/book/:id")
 async def delete(request):
     id = request['params']['id']
-    print(id)
 
     book = delete_book(id)
 
@@ -104,12 +97,6 @@ async def delete(request):
     else:    
         return book    
 
-
-
-
-    
-    
-    
 
 
 app.start(port=8000, url="0.0.0.0")
