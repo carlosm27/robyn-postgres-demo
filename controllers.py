@@ -31,7 +31,7 @@ def all_books():
 
 
 def new_book(title:str, author:str, pages_num:int, review:str):
-    
+
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute('INSERT INTO books (title, author, pages_num, review)'
@@ -49,7 +49,29 @@ def book_by_id(id:int):
     cur = conn.cursor()
     cur.execute('SELECT * FROM books WHERE id=%s', (id,))
     book = cur.fetchall()
-    print(book)
+    
     cur.close()
     conn.close()
     return book
+
+
+def update_book(title:str, id:int):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('UPDATE books SET title = %s WHERE id = %s', (title, id))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    
+    return "Book updated"
+
+
+def delete_book(id:int):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM books WHERE id = %s", (id))
+    conn.commit()
+    conn.close()
+
+    return "Book deleted"
