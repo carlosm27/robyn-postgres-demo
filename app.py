@@ -1,5 +1,5 @@
 from robyn import Robyn, jsonify
-from controllers import all_books
+from controllers import all_books, new_book, book_by_id
 import json
 from dotenv import load_dotenv
 import os
@@ -29,23 +29,9 @@ def get_db_connection():
 async def h(request):
     return "Hello, world!"
 
-@app.get("/books")
-async def books(request):
-  
-    conn = get_db_connection()
-    
-    cur = conn.cursor()
-    cur.execute('SELECT * FROM books;')
-    books = cur.fetchall()
-    print(books)
-    cur.close()
-    conn.close()
-    
-
-    return books
 
 @app.post("/book")
-async def new_item(request):
+async def create_book(request):
     body = bytearray(request['body']).decode("utf-8")
     json_body = json.loads(body)
 
@@ -54,24 +40,33 @@ async def new_item(request):
     pages_num = json_body['pages_num']
     review = json_body['review']
 
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute('INSERT INTO books (title, author, pages_num, review)'
-                    'VALUES (%s, %s, %s, %s)',
-                    (title, author, pages_num, review))
-    conn.commit()
-    cur.close()
-    conn.close()
-
+    print(title)
+    book = new_book(title, author, pages_num, review)
+    print(book)
     
-    return "Book Added"
+    return book
 
-@app.get("/all")
-async def all(request):
+@app.get("/books")
+async def books(request):
     print("Here")
     books = all_books()
     print(books)
     return books
+
+@app.get("/book/:id")
+async def get_book(request):
+    id = request['params']['id']
+    book_id = int(id)
+    print(id)
+
+    book = book_by_id(id)
+
+    if book == []:
+        return {"status_code":404, "body": "Book not Found", "type": "text"}
+    else:    
+        return book
+
+
 
 
     
