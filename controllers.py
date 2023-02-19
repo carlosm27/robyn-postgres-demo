@@ -2,6 +2,7 @@ from init_db import get_db_connection
 from psycopg2.extras import RealDictCursor
 import json
 from helpers import to_dict, list_dict
+from models import Book
 
 
 def all_books():
@@ -11,12 +12,11 @@ def all_books():
     books = list_dict(cur.fetchall())
     cur.close()
     conn.close()
-    print(books)
-    return json.dumps(books)
+    
+    return books
 
 
 def new_book(title:str, author:str, pages_num:int, review:str):
-
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute('INSERT INTO books (title, author, pages_num, review)'
@@ -34,14 +34,19 @@ def new_book(title:str, author:str, pages_num:int, review:str):
 def book_by_id(id:int):
     conn = get_db_connection()
     cur = conn.cursor()
+    
+    try:
 
-    cur.execute('SELECT * FROM books WHERE id=%s', (id,))
-    book = cur.fetchone()
-    book_dict = to_dict(book)
+        cur.execute('SELECT * FROM books WHERE id=%s', (id,))
+        book = cur.fetchone()
+        book_dict = to_dict(book)
+        
 
-    cur.close()
-    conn.close()
-    return json.dumps(book_dict)
+        cur.close()
+        conn.close()
+        return json.dumps(book_dict)
+    except:
+        return None
 
 
 
