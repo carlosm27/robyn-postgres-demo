@@ -1,7 +1,7 @@
 from robyn import Robyn
 from controllers import all_books, new_book, book_by_id, delete_book, update_book
 import json
-
+from models import Book
 
 app = Robyn(__file__)
 
@@ -11,20 +11,17 @@ async def create_book(request):
     body = bytearray(request['body']).decode("utf-8")
     json_body = json.loads(body)
 
-    title = json_body['title']
-    author = json_body['author']
-    pages_num = json_body['pages_num']
-    review = json_body['review']
-
-    book = new_book(title, author, pages_num, review)
-    
-    return book
+    try:
+        book = new_book(json_body['title'], json_body['author'], json_body['pages_num'], json_body['review'])
+        return {"status_code":201, "body": book, "type": "json"}
+    except:
+        return {"status_code":500, "body": "Internal Server Error", "type": "text"}
 
 
 @app.get("/books")
 async def books():
-    books = all_books()
-    return books
+    books = json.dumps(all_books())
+    return {"status_code":200, "body": books, "type": "json"}
 
 
 @app.get("/book/:id")
@@ -33,11 +30,14 @@ async def get_book(request):
 
     book = book_by_id(id)
 
-    if book == None:
-        return {"status_code":404, "body": "Book not Found", "type": "text"}
-    else:
-        return book   
-    
+    try:
+        if book == None:
+            return {"status_code":404, "body": "Book not Found", "type": "text"}
+        else:
+            return {"status_code":200, "body": book, "type": "json"}
+    except:
+         return {"status_code":500, "body": "Internal Server Error", "type": "text"}    
+        
         
 @app.put("/book/:id")
 async def update(request):
@@ -53,24 +53,30 @@ async def update(request):
 
     book_id = book_by_id(id)
 
-    if book_id == []:
+    if book_id == None:
         return {"status_code":404, "body": "Book not Found", "type": "text"}
-    else:    
-        book = update_book(title, author, pages_num, review, id)
-        print(book)
-        return book
+    else:
+        try: 
+            book = update_book(title, author, pages_num, review, id)
+            return {"status_code":200, "body": book, "type": "json"}
+        except:
+            return {"status_code":500, "body": "Internal Server Error", "type": "text"}
     
 
 @app.delete("/book/:id")
 async def delete(request):
     id = request['params']['id']
 
-    book = delete_book(id)
+    book_id = book_by_id(id)
 
-    if book != "Book deleted":
+    if book_id == None:
         return {"status_code":404, "body": "Book not Found", "type": "text"}
-    else:    
-        return book    
+    else:
+        try: 
+            delete_book(id)
+            return {"status_code":200, "body": "Book deleted", "type": "json"}
+        except:
+            return {"status_code":500, "body": "Internal Server Error", "type": "text"}  
 
 
 
