@@ -19,13 +19,7 @@ def list_dict(rows:list):
 
     row_list = []
     for row in rows:
-        book_dict = collections.OrderedDict()
-        book_dict['id'] = row[0]
-        book_dict['title'] = row[1]
-        book_dict['author'] = row[2]
-        book_dict['pages_num'] = row[3]
-        book_dict['review'] = row[4]
-        book_dict['datetime'] = row[5].strftime("%m/%d/%Y")
+        book_dict = to_dict(row)
         row_list.append(book_dict)
 
     return row_list    
