@@ -1,7 +1,8 @@
-from robyn import Robyn
+from robyn import Robyn, jsonify
 from controllers import all_books, new_book, book_by_id, delete_book, update_book
 import json
 from models import Book
+
 
 app = Robyn(__file__)
 
@@ -12,7 +13,7 @@ async def create_book(request):
     json_body = json.loads(body)
 
     try:
-        book = new_book(json_body['title'], json_body['author'], json_body['pages_num'], json_body['review'])
+        book = new_book(json_body['title'], json_body['author'])
         return {"status_code":201, "body": book, "type": "json"}
     except:
         return {"status_code":500, "body": "Internal Server Error", "type": "text"}
@@ -20,7 +21,8 @@ async def create_book(request):
 
 @app.get("/books")
 async def books():
-    books = json.dumps(all_books())
+    books = jsonify(all_books())
+    print(books)
     return {"status_code":200, "body": books, "type": "json"}
 
 
@@ -48,8 +50,6 @@ async def update(request):
 
     title = json_body['title']
     author = json_body['author']
-    pages_num = json_body['pages_num']
-    review = json_body['review']
 
     book_id = book_by_id(id)
 
@@ -57,7 +57,7 @@ async def update(request):
         return {"status_code":404, "body": "Book not Found", "type": "text"}
     else:
         try: 
-            book = update_book(title, author, pages_num, review, id)
+            book = update_book(title, author, id)
             return {"status_code":200, "body": book, "type": "json"}
         except:
             return {"status_code":500, "body": "Internal Server Error", "type": "text"}
