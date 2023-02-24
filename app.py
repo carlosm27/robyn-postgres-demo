@@ -21,8 +21,7 @@ async def create_book(request):
 
 @app.get("/books")
 async def books():
-    books = jsonify(all_books())
-    print(books)
+    books = all_books()
     return {"status_code":200, "body": books, "type": "json"}
 
 
