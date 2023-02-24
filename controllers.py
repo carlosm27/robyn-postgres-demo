@@ -10,11 +10,10 @@ def all_books():
     cur = conn.cursor()
     cur.execute('SELECT * FROM books;')
     books = list_dict(cur.fetchall())
-    print(books)
     cur.close()
     conn.close()
     
-    return books
+    return json.dumps(books)
 
 
 def new_book(title:str, author:str):
