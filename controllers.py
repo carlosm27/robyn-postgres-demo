@@ -1,5 +1,4 @@
 from init_db import get_db_connection
-from psycopg2.extras import RealDictCursor
 import json
 from helpers import to_dict, list_dict
 from models import Book
@@ -10,6 +9,7 @@ def all_books():
     cur = conn.cursor()
     cur.execute('SELECT * FROM books;')
     books = list_dict(cur.fetchall())
+    print(books)
     cur.close()
     conn.close()
     
